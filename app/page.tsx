@@ -6,11 +6,11 @@ import type { Schema } from "@/amplify/data/resource";
 import "./../app/app.css";
 import { Amplify } from "aws-amplify";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-// import outputs from "@/amplify_outputs.json";
+import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
 import TodoItem from '@/components/TodoItem';
 
-// Amplify.configure(outputs);
+Amplify.configure(outputs);
 
 const client = generateClient<Schema>();
 
