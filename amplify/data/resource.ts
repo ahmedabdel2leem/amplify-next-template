@@ -9,9 +9,9 @@ specifies that any user authenticated via an API key can "create", "read",
 const schema = a.schema({
   Todo: a
     .model({
+      isDone: a.boolean(),
       content: a.string(),
-    })
-    .authorization((allow) => [allow.publicApiKey()]),
+     }).authorization(allow => [allow.owner()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
@@ -19,7 +19,20 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: "apiKey",
+    // This tells the data client in your app (generateClient())
+    // to sign API requests with the user authentication token. 
+    defaultAuthorizationMode: 'userPool',
+
+    apiKeyAuthorizationMode: {
+      expiresInDays: 30,
+    },
+  },
+});
+
+/*== STEP 2 ===============================================================
+Go to your frontend source code. From your client-side code, generate a
+Data client to make CRUDL requests to your table. (THIS SNIPPET WILL ONLY
+WORK IN THE FRONTEND CODE FILE.)
     apiKeyAuthorizationMode: {
       expiresInDays: 30,
     },
