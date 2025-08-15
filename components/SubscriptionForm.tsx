@@ -23,7 +23,7 @@ export default function SubscriptionManager() {
           path: `picture-submissions/${file.name}`,
           data: file,
         }).result;
-
+console.log("Upload result:", uploadResult);
         imageKey = uploadResult.path; // S3 key
       }
 
