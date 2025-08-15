@@ -1,4 +1,5 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
+import { image } from "framer-motion/client";
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -11,13 +12,25 @@ const schema = a.schema({
     .model({
       isDone: a.boolean(),
       content: a.string(),
+      category: a.string().default("personal"),
      }).authorization(allow => [allow.owner()]),
 });
-
-export type Schema = ClientSchema<typeof schema>;
-
+const schema2 = a.schema({
+  subscriptionModel: a
+    .model({
+      isNew: a.boolean().default(false),
+      type: a.string().default(""),
+      category: a.string().default("personal"),
+      image: a.string().default(""),
+    }).authorization(allow => [allow.owner()]),
+});
+const fullSchema = a.schema({
+  ...schema.models,        // Todo
+  ...schema2.models,       // subscriptionModel
+});
+export type Schema = ClientSchema<typeof fullSchema>;
 export const data = defineData({
-  schema,
+  schema:fullSchema, // This tells the data client in your app (generateClient())
   authorizationModes: {
     // This tells the data client in your app (generateClient())
     // to sign API requests with the user authentication token. 

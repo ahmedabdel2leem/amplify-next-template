@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import type { Schema } from "@/amplify/data/resource";
-
+import { motion } from "framer-motion";
 interface TodoItemProps {
   todo: Schema["Todo"]["type"];
   onDelete: (id: string) => Promise<void>;
   onToggle: (id: string, isDone: boolean) => Promise<void>;
+  index: number;
 }
 
-export default function TodoItem({ todo, onDelete, onToggle }: TodoItemProps) {
+export default function TodoItem({ todo, onDelete, onToggle, index }: TodoItemProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleDelete = async () => {
@@ -23,7 +24,12 @@ export default function TodoItem({ todo, onDelete, onToggle }: TodoItemProps) {
   };
 
   return (
-    <li className={`flex items-center justify-between ${todo.isDone ? "!bg-gray-200" : "bg-white"}`}>
+    <motion.li
+          key={todo.id}
+          initial={{ opacity: 0, y: 5 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+    className={`flex items-center justify-between ${todo.isDone ? "!bg-gray-200" : "bg-white"}`}>
       <span>
         <strong>{todo.content}</strong>
       </span>
@@ -35,6 +41,6 @@ export default function TodoItem({ todo, onDelete, onToggle }: TodoItemProps) {
         </span>
         <button onClick={handleDelete}>Delete</button>
       </div>
-    </li>
+    </motion.li>
   );
 }
