@@ -1,7 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { generateClient } from "aws-amplify/data";
-import { uploadData } from "aws-amplify/storage";
+import { getUrl, uploadData } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
 
 const client = generateClient<Schema>();
@@ -11,10 +11,11 @@ export default function SubscriptionManager() {
   const [category, setCategory] = useState("personal");
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const handleAddSubscription = async () => {
     try {
       setUploading(true);
+
 
       let imageKey = "";
       if (file) {
@@ -22,9 +23,14 @@ export default function SubscriptionManager() {
             
           path: `picture-submissions/${file.name}`,
           data: file,
-        }).result;
+         }).result;
 console.log("Upload result:", uploadResult);
-        imageKey = uploadResult.path; // S3 key
+         const key = uploadResult.path; // S3 key
+         console.log("Upload result:", uploadResult,key);
+          const { url } = await getUrl({ path: key });
+console.log(url.toString());
+
+        imageKey = key;
       }
 
       await client.models.subscriptionModel.create({
@@ -38,6 +44,9 @@ console.log("Upload result:", uploadResult);
       setType("");
       setCategory("personal");
       setFile(null);
+       if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } catch (err) {
       console.error("Error creating subscription:", err);
     } finally {
@@ -66,6 +75,7 @@ console.log("Upload result:", uploadResult);
       </select>
 
       <input
+        ref={fileInputRef}
         type="file"
         accept="image/*"
         onChange={(e) => setFile(e.target.files?.[0] ?? null)}
