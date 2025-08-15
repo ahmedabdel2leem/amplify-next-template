@@ -1,7 +1,8 @@
 import { defineStorage } from '@aws-amplify/backend';
 
-export const firstBucket = defineStorage({
-  name: 'firstBucket',
+export const secondBucket = defineStorage({
+  name: 'secondBucket',
+  
   isDefault: true, // identify your default storage bucket (required)
   access: (allow) => ({
     'profile-pictures/{entity_id}/*': [

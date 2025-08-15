@@ -17,20 +17,28 @@ export default function SubscriptionManager() {
       setUploading(true);
 
 
-      let imageKey = "";
+      let imageKey:any = "";
       if (file) {
+        console.log("Uploading file:", file);
         const uploadResult = await uploadData({
             
           path: `picture-submissions/${file.name}`,
           data: file,
+          options: {
+            contentType: file.type, // Use the file's MIME type
+        }
          }).result;
+         console.log("Upload result:", uploadResult);
+
 console.log("Upload result:", uploadResult);
          const key = uploadResult.path; // S3 key
          console.log("Upload result:", uploadResult,key);
-          const { url } = await getUrl({ path: key });
+          const { url } = await getUrl({ path: key,options:{
+            contentType:"image/jpeg" // Adjust content type as needed
+          } });
 console.log(url.toString());
 
-        imageKey = key;
+        imageKey = url;
       }
 
       await client.models.subscriptionModel.create({
